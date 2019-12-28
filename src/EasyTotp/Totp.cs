@@ -83,5 +83,11 @@ namespace EasyTotp
             var truncatedValue = ((int) input % (int) Math.Pow(10, digitCount));
             return truncatedValue.ToString().PadLeft(digitCount, '0');
         }
+
+        public string Decrypt(byte[] cipherTest, byte[] key, byte[] iv)
+        {
+           var aes = new Aes(key,iv);
+           return aes.Decrypt(cipherTest); 
+        }
     }
 }
