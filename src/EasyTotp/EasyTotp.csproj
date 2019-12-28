@@ -2,6 +2,16 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Title>An easy to use, flexible Time-Based One Time Password library for C# in dotnetcore</Title>
+    <Description>An easy to use, flexible Time-Based One Time Password library for C# in dotnetcore</Description>
+    <Copyright>NULL</Copyright>
+    <PackageProjectUrl>https://github.com/alicommit-malp/EasyTotp</PackageProjectUrl>
+    <PackageLicenseUrl>https://github.com/alicommit-malp/EasyTotp/blob/master/LICENSE</PackageLicenseUrl>
+    <RepositoryUrl>https://github.com/alicommit-malp/EasyTotp</RepositoryUrl>
+    <RepositoryType>GIT</RepositoryType>
+    <PackageTags>TOTP , HMAC </PackageTags>
+    <LangVersion>8</LangVersion>
   </PropertyGroup>
 
 </Project>
