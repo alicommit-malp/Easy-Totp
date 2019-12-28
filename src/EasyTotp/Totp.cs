@@ -50,12 +50,12 @@ namespace EasyTotp
             return result;
         }
 
-        public string ComputeEncrypted(byte[] key, byte[] iv)
+        public byte[] ComputeEncrypted(byte[] key, byte[] iv)
         {
             var aes = new Aes(key,iv);
             var totp = Compute();
 
-            return Encoding.UTF8.GetString(aes.Encrypt(totp));
+            return aes.Encrypt(totp);
         }
 
         public int GetRemainingSeconds()
