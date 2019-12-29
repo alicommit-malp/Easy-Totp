@@ -22,15 +22,19 @@ namespace EasyTotpTest
                 else Task.Delay(800).GetAwaiter().GetResult();
             }
 
-            var totp = new Totp(Encoding.UTF8.GetBytes(Key), 5, 8);
+            var totp = new Totp()
+                    .Secret(Key)
+                    .Length(8)
+                    .ValidFor(TimeSpan.FromSeconds(5))
+                    .UseDefaultEncryptor(_aesKey,_aesIv);
 
-            var value1 = totp.ComputeEncrypted(_aesKey,_aesIv);
-            var value1Dec= totp.Decrypt(value1,_aesKey,_aesIv);
+            var value1 = totp.ComputeEncrypted();
+            var value1Dec= totp.Decrypt(value1);
 
             Task.Delay(3000).GetAwaiter().GetResult();
 
-            var value2 = totp.ComputeEncrypted(_aesKey,_aesIv);
-            var value2Dec= totp.Decrypt(value2,_aesKey,_aesIv);
+            var value2 = totp.ComputeEncrypted();
+            var value2Dec= totp.Decrypt(value2);
 
             Assert.AreEqual(value1Dec, value2Dec);
         }
@@ -43,15 +47,19 @@ namespace EasyTotpTest
                 else Task.Delay(800).GetAwaiter().GetResult();
             }
 
-            var totp = new Totp(Encoding.UTF8.GetBytes(Key), 5, 8);
+            var totp = new Totp()
+                    .Secret(Key)
+                    .Length(8)
+                    .ValidFor(TimeSpan.FromSeconds(5))
+                    .UseDefaultEncryptor(_aesKey,_aesIv);
 
-            var value1 = totp.ComputeEncrypted(_aesKey,_aesIv);
-            var value1Dec= totp.Decrypt(value1,_aesKey,_aesIv);
+            var value1 = totp.ComputeEncrypted();
+            var value1Dec= totp.Decrypt(value1);
 
             Task.Delay(6000).GetAwaiter().GetResult();
 
-            var value2 = totp.ComputeEncrypted(_aesKey,_aesIv);
-            var value2Dec= totp.Decrypt(value2,_aesKey,_aesIv);
+            var value2 = totp.ComputeEncrypted();
+            var value2Dec= totp.Decrypt(value2);
 
             Assert.AreNotEqual(value1Dec, value2Dec);
         }
@@ -64,7 +72,10 @@ namespace EasyTotpTest
                 else Task.Delay(800).GetAwaiter().GetResult();
             }
 
-            var totp = new Totp(Encoding.UTF8.GetBytes(Key), 5, 8);
+            var totp = new Totp()
+                    .Secret(Key)
+                    .Length(8)
+                    .ValidFor(TimeSpan.FromSeconds(5));
 
             var value1 = totp.Compute();
 
@@ -82,7 +93,10 @@ namespace EasyTotpTest
                 if(DateTime.Now.Second%5==0) break;
                 else Task.Delay(800).GetAwaiter().GetResult();
             }
-            var totp = new Totp(Encoding.UTF8.GetBytes(Key), 5, 8);
+            var totp = new Totp()
+                    .Secret(Key)
+                    .Length(8)
+                    .ValidFor(TimeSpan.FromSeconds(5));
 
             var value1 = totp.Compute();
 

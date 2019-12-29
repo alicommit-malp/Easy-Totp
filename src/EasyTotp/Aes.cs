@@ -5,7 +5,7 @@ using System.Security.Cryptography;
 
 namespace EasyTotp
 {
-    internal class Aes
+    internal class Aes :IEncryptor
     {
         private readonly byte[] _key;
         private readonly byte[] _iv;

@@ -1,0 +1,31 @@
+@startuml
+
+' !pragma teoz true
+skinparam monochrome true
+
+participant "Web/Mobile APP" as c
+participant "Micro-Service 1" as s1
+participant "Micro-Service 2" as s2
+
+note left of c: Generating new dynamic API-Key
+note left of c: API-Key-client = Totp.ComputeEncrypted()
+c -> s1 : Request
+note over s1: API-Key-server = Totp.ComputeEncrypted()
+alt API-Key-client == API-Key-server
+    s1 -> c : Response
+else 
+    s1 -> c : 401 (Unauthorized)
+end
+
+note left of c: Generating new dynamic API-Key
+note left of c: API-Key-client = Totp.ComputeEncrypted()
+c -> s2 : Request
+note over s2: API-Key-server = Totp.ComputeEncrypted()
+alt API-Key-client == API-Key-server
+    s2 -> c : Response
+else 
+    s2 -> c : 401 (Unauthorized)
+end
+
+
+@enduml

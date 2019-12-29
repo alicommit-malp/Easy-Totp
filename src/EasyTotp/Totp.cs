@@ -8,24 +8,46 @@ namespace EasyTotp
     {
         private const long UnixEpochTicks = 621355968000000000L;
         private const long TicksToSeconds = 10000000L;
-        private readonly int _step;
-        private readonly int _totpSize;
-        private readonly byte[] _key;
+        private  int _step;
+        private  int _totpSize;
+        private byte[] _key;
+        private  IEncryptor _encryptor;
 
         
-        /// <summary>
-        /// Initialize the TOTP module
-        /// </summary>
-        /// <param name="secretKey">32 character secret</param>
-        /// <param name="step">TOTP step size</param>
-        /// <param name="outputSize">TOTP output digit length</param>
-        public Totp(byte[] secretKey, int step, int outputSize)
-        {
-            _key = secretKey;
-            _step = step;
-            _totpSize = outputSize;
+        public Totp UseDefaultEncryptor(string key, string iv){
+            _encryptor = new Aes(Encoding.UTF8.GetBytes(key),Encoding.UTF8.GetBytes(iv));
+            return this;
         }
-        
+
+        public Totp UseDefaultEncryptor(byte[] key, byte[] iv){
+            _encryptor = new Aes(key,iv);
+            return this;
+        }
+
+        public Totp Use(IEncryptor encryptor){
+            _encryptor = encryptor;
+            return this;
+        }
+
+        public Totp Length(int length){
+            _totpSize = length;
+            return this;
+        }
+
+        public Totp ValidFor(TimeSpan timeSpan){
+            _step = timeSpan.Seconds;
+            return this;
+        }
+
+        public Totp Secret(string key){
+            _key=Encoding.UTF8.GetBytes(key);
+            return this;
+        }
+        public Totp Secret(byte[] secret){
+            _key=secret;
+            return this;
+        }
+
         /// <summary>
         /// Compute the TOTP integer value 
         /// </summary>
@@ -50,12 +72,10 @@ namespace EasyTotp
             return result;
         }
 
-        public byte[] ComputeEncrypted(byte[] key, byte[] iv)
+        public byte[] ComputeEncrypted()
         {
-            var aes = new Aes(key,iv);
             var totp = Compute();
-
-            return aes.Encrypt(totp);
+            return _encryptor.Encrypt(totp);
         }
 
         public int GetRemainingSeconds()
@@ -84,10 +104,9 @@ namespace EasyTotp
             return truncatedValue.ToString().PadLeft(digitCount, '0');
         }
 
-        public string Decrypt(byte[] cipherTest, byte[] key, byte[] iv)
+        public string Decrypt(byte[] cipherTest)
         {
-           var aes = new Aes(key,iv);
-           return aes.Decrypt(cipherTest); 
+           return _encryptor.Decrypt(cipherTest); 
         }
     }
 }
