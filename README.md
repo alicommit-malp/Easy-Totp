@@ -55,9 +55,9 @@ var totp = new Totp()
     .ValidFor(TimeSpan.FromSeconds(5))
     .UseDefaultEncryptor(_aesKey,_aesIv);
 
-var output = Encoding.UTF8.GetString(totp.ComputeEncrypted());
+var output = Convert.ToBase64String(totp.ComputeEncrypted());
 
-//output = F�dm\u0019 ;��\u0016x�\u000esә
+//output = DV/tzyq8YG+BRZGSpOVNZQ==
 
 ```
 

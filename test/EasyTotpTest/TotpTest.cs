@@ -29,6 +29,7 @@ namespace EasyTotpTest
                     .UseDefaultEncryptor(_aesKey,_aesIv);
 
             var value1 = totp.ComputeEncrypted();
+            
             var value1Dec= totp.Decrypt(value1);
 
             Task.Delay(3000).GetAwaiter().GetResult();
