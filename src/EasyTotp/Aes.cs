@@ -1,10 +1,12 @@
 using System;
-using System.Diagnostics;
 using System.IO;
 using System.Security.Cryptography;
 
 namespace EasyTotp
 {
+    /// <summary>
+    /// Default encryption implementation <see cref="IEncryptor"/> <seealso cref="System.Security.Cryptography.Aes"/>
+    /// </summary>
     internal class Aes :IEncryptor
     {
         private readonly byte[] _key;
@@ -21,46 +23,40 @@ namespace EasyTotp
             _iv = iv;
         }
 
+        /// <inheritdoc/> 
         public byte[] Encrypt(string plainText)
         {
             if (plainText == null || plainText.Length <= 0)
                 throw new ArgumentNullException(nameof(plainText));
-            byte[] encrypted;
 
             // Create an Aes object with the specified key and IV.
-            using (System.Security.Cryptography.Aes aesAlg = System.Security.Cryptography.Aes.Create())
+            using var aesAlg = System.Security.Cryptography.Aes.Create();
+            aesAlg.Key = _key;
+            aesAlg.IV = _iv;
+
+            // Create a decrytor to perform the stream transform.
+            var encryptor = aesAlg.CreateEncryptor(aesAlg.Key,
+                aesAlg.IV);
+
+            // Create the streams used for encryption.
+            using var msEncrypt = new MemoryStream();
+            using var csEncrypt = new CryptoStream(msEncrypt,
+                encryptor,
+                CryptoStreamMode.Write);
+            using (var swEncrypt = new StreamWriter(csEncrypt))
             {
-                aesAlg.Key = _key;
-                aesAlg.IV = _iv;
-
-                // Create a decrytor to perform the stream transform.
-                ICryptoTransform encryptor = aesAlg.CreateEncryptor(aesAlg.Key,
-                                                                    aesAlg.IV);
-
-                // Create the streams used for encryption.
-                using (MemoryStream msEncrypt = new MemoryStream())
-                {
-                    using (CryptoStream csEncrypt = new CryptoStream(msEncrypt,
-                                                                     encryptor,
-                                                                     CryptoStreamMode.Write))
-                    {
-                        using (StreamWriter swEncrypt = new StreamWriter(csEncrypt))
-                        {
-                            //Write all data to the stream.
-                            swEncrypt.Write(plainText);
-                        }
-
-                        encrypted = msEncrypt.ToArray();
-                    }
-                }
+                //Write all data to the stream.
+                swEncrypt.Write(plainText);
             }
 
+            var encrypted = msEncrypt.ToArray();
 
 
             // Return the encrypted bytes from the memory stream.
             return encrypted;
         }
 
+        /// <inheritdoc/> 
         public string Decrypt(byte[] cipherText)
         {
             // Check arguments.
@@ -69,35 +65,25 @@ namespace EasyTotp
 
             // Declare the string used to hold
             // the decrypted text.
-            string plaintext;
 
             // Create an Aes object with the specified key and IV.
-            using (System.Security.Cryptography.Aes aesAlg = System.Security.Cryptography.Aes.Create())
-            {
-                aesAlg.Key = _key;
-                aesAlg.IV = _iv;
+            using var aesAlg = System.Security.Cryptography.Aes.Create();
+            aesAlg.Key = _key;
+            aesAlg.IV = _iv;
 
-                // Create a decrytor to perform the stream transform.
-                ICryptoTransform decryptor = aesAlg.CreateDecryptor(aesAlg.Key,
-                                                                    aesAlg.IV);
+            // Create a decrytor to perform the stream transform.
+            var decryptor = aesAlg.CreateDecryptor(aesAlg.Key,
+                aesAlg.IV);
 
-                // Create the streams used for decryption.
-                using (MemoryStream msDecrypt = new MemoryStream(cipherText))
-                {
-                    using (CryptoStream csDecrypt = new CryptoStream(msDecrypt,
-                                                                     decryptor,
-                                                                     CryptoStreamMode.Read))
-                    {
-                        using (StreamReader srDecrypt = new StreamReader(csDecrypt))
-                        {
-
-                            // Read the decrypted bytes from the decrypting stream
-                            // and place them in a string.
-                            plaintext = srDecrypt.ReadToEnd();
-                        }
-                    }
-                }
-            }
+            // Create the streams used for decryption.
+            using var msDecrypt = new MemoryStream(cipherText);
+            using var csDecrypt = new CryptoStream(msDecrypt,
+                decryptor,
+                CryptoStreamMode.Read);
+            using var srDecrypt = new StreamReader(csDecrypt);
+            // Read the decrypted bytes from the decrypting stream
+            // and place them in a string.
+            var plaintext = srDecrypt.ReadToEnd();
 
             return plaintext;
         }

@@ -15,11 +15,12 @@ namespace EasyTotpTest
         
 
         [Test]
-        public void SameTotpTheSameTimeStepEncrypted()
+        public async Task SameTotpTheSameTimeStepEncrypted()
         {
-            while(true){
+            while(true)
+            {
                 if(DateTime.Now.Second%5==0) break;
-                else Task.Delay(800).GetAwaiter().GetResult();
+                await Task.Delay(800);
             }
 
             var totp = new Totp()
@@ -32,7 +33,7 @@ namespace EasyTotpTest
             
             var value1Dec= totp.Decrypt(value1);
 
-            Task.Delay(3000).GetAwaiter().GetResult();
+            await Task.Delay(3000);
 
             var value2 = totp.ComputeEncrypted();
             var value2Dec= totp.Decrypt(value2);
@@ -41,11 +42,11 @@ namespace EasyTotpTest
         }
 
         [Test]
-        public void NotSameTotp_OutOfTimeStep_Encrypted()
+        public async Task NotSameTotp_OutOfTimeStep_Encrypted()
         {
             while(true){
                 if(DateTime.Now.Second%5==0) break;
-                else Task.Delay(800).GetAwaiter().GetResult();
+                await Task.Delay(800);
             }
 
             var totp = new Totp()
@@ -57,7 +58,7 @@ namespace EasyTotpTest
             var value1 = totp.ComputeEncrypted();
             var value1Dec= totp.Decrypt(value1);
 
-            Task.Delay(6000).GetAwaiter().GetResult();
+            await Task.Delay(6000);
 
             var value2 = totp.ComputeEncrypted();
             var value2Dec= totp.Decrypt(value2);
@@ -65,12 +66,12 @@ namespace EasyTotpTest
             Assert.AreNotEqual(value1Dec, value2Dec);
         }
         [Test]
-        public void SameTotpTheSameTimeStep()
+        public async Task SameTotpTheSameTimeStep()
         {
 
             while(true){
                 if(DateTime.Now.Second%5==0) break;
-                else Task.Delay(800).GetAwaiter().GetResult();
+                await Task.Delay(800);
             }
 
             var totp = new Totp()
@@ -80,7 +81,7 @@ namespace EasyTotpTest
 
             var value1 = totp.Compute();
 
-             Task.Delay(2000).GetAwaiter().GetResult();
+            await Task.Delay(2000);
 
             var value2 = totp.Compute();
 
@@ -88,11 +89,11 @@ namespace EasyTotpTest
         }
 
         [Test]
-        public void NotSameTotp_OutOfTimeStep()
+        public async Task NotSameTotp_OutOfTimeStep()
         {
             while(true){
                 if(DateTime.Now.Second%5==0) break;
-                else Task.Delay(800).GetAwaiter().GetResult();
+                await Task.Delay(800);
             }
             var totp = new Totp()
                     .Secret(Key)
@@ -101,7 +102,7 @@ namespace EasyTotpTest
 
             var value1 = totp.Compute();
 
-             Task.Delay(6000).GetAwaiter().GetResult();
+            await Task.Delay(6000);
 
             var value2 = totp.Compute();
 

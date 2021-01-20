@@ -2,7 +2,8 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <version>1.1.0</version>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <version>1.2.1</version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Title>An easy to use, flexible Time-Based One Time Password library for C# in dotnetcore</Title>
     <Description>An easy to use, flexible Time-Based One Time Password library for C# in dotnetcore</Description>
